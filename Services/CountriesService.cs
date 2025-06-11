@@ -38,12 +38,20 @@ namespace Services
         public List<CountryResponse> GetAllCountries()
         {
             return _countries.Select(c => c.ToCountryResponse()).ToList();
-
         }
 
         public CountryResponse? GetCountryByID(Guid? countryID)
         {
-            throw new NotImplementedException();
+            if (countryID == null)
+            {
+                return null;
+            }
+            Country? country = _countries.FirstOrDefault(c => c.CountryID == countryID);
+            if (country == null) 
+            {
+                return null;
+            }
+            return country.ToCountryResponse();
         }
     }
 }
