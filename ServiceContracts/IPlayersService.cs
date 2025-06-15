@@ -1,9 +1,6 @@
 ﻿using ServiceContracts.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ServiceContracts.Enums;
+
 
 namespace ServiceContracts
 {
@@ -11,5 +8,10 @@ namespace ServiceContracts
     {
         PlayerResponse AddPlayer(PlayerAddRequest? request);
         List<PlayerResponse> GetAllPlayers();
+        PlayerResponse? GetPlayerByID(Guid? playerID);
+        List<PlayerResponse> GetFilteredPlayers(string searchBy, string? searchString);
+        List<PlayerResponse> GetSortedPlayers(List<PlayerResponse> allPlayers, string sortBy, SortOrder sortOrder);
+        PlayerResponse UpdatePlayer(PlayerUpdateRequest? request);
+        bool DeletePlayer(Guid? playerID);
     }
 }

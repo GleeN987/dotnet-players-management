@@ -1,0 +1,59 @@
+﻿@model List<PlayerResponse>
+
+@{
+	ViewBag.Title = "Players";
+}
+
+<h1>Players</h1>
+
+<form action="~/players/index" method="get">
+	<div class="box flex">
+		<div class="flex-1">
+			<select class="form-input" name="searchBy" >
+				@foreach (var field in ViewBag.Fields)
+				{
+					if(field.Key == ViewBag.CurrentSearchBy)
+					{
+						<option value="@field.Key" selected="selected">@field.Value</option>
+					}
+					else
+					{
+						<option value="@field.Key">@field.Value</option>
+					}
+				}
+			</select>
+		</div>
+		<div class="flex-1">
+			<input type="search" id="Search" class="form-input" placeholder="Search" name="searchString" value="@ViewBag.CurrentSearchString"/>
+		</div>
+	</div>
+
+	<table class="table w-100 mt">
+		<thead>
+			<tr>
+				@await Html.PartialAsync("_ColumnHeaderSort", new ViewDataDictionary(ViewData) { { "ColumnName", nameof(PlayerResponse.Nickname) }, { "DisplayName", "Nickname" } })
+				@await Html.PartialAsync("_ColumnHeaderSort", new ViewDataDictionary(ViewData) { { "ColumnName", nameof(PlayerResponse.Team) }, { "DisplayName", "Team" } })
+				@await Html.PartialAsync("_ColumnHeaderSort", new ViewDataDictionary(ViewData) { { "ColumnName", nameof(PlayerResponse.Mouse) }, { "DisplayName", "Mouse" } })
+				@await Html.PartialAsync("_ColumnHeaderSort", new ViewDataDictionary(ViewData) { { "ColumnName", nameof(PlayerResponse.Mousepad) }, { "DisplayName", "Mousepad" } })
+				@await Html.PartialAsync("_ColumnHeaderSort", new ViewDataDictionary(ViewData) { { "ColumnName", nameof(PlayerResponse.Country) }, { "DisplayName", "Country" } })
+				@await Html.PartialAsync("_ColumnHeaderSort", new ViewDataDictionary(ViewData) { { "ColumnName", nameof(PlayerResponse.DateOfBirth) }, { "DisplayName", "Date of birth" } })
+				@await Html.PartialAsync("_ColumnHeaderSort", new ViewDataDictionary(ViewData) { { "ColumnName", nameof(PlayerResponse.Age) }, { "DisplayName", "Age" } })
+			
+		</tr>
+	</thead>
+	<tbody>
+		@foreach(PlayerResponse player in Model)
+		{
+			<tr>
+				<td style="width:15%">@player.Nickname</td>
+				<td style="width:15%">@player.Team</td>
+				<td style ="width:20%">@player.Mouse</td>
+				<td style="width:20%">@player.Mousepad</td>
+				<td style="width:10%">@player.Country</td>
+				<td style ="width:15%">@player.DateOfBirth?.ToString("dd MMM yyyy")</td>
+				<td style="width:5%">@player.Age</td>
+			</tr>
+		}
+	</tbody>
+</table>
+</form>

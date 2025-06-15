@@ -12,7 +12,7 @@ namespace xUnitTests
 
         public CountriesServiceTests()
         {
-            _countriesService = new CountriesService();
+            _countriesService = new CountriesService(false);
         }
         #region AddCountry
         //country request is null -> null exception

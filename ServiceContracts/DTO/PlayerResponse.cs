@@ -1,4 +1,5 @@
 ﻿using Entities;
+using ServiceContracts.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,27 @@ namespace ServiceContracts.DTO
         public override int GetHashCode()
         {
             throw new NotImplementedException();
+        }
+
+        public override string ToString()
+        {
+            return $"Player: {Nickname}, ID: {PlayerID}";
+        }
+
+        public PlayerUpdateRequest ToPlayerUpdateRequest()
+        {
+            return new PlayerUpdateRequest
+            {
+                PlayerID = PlayerID,
+                Nickname = Nickname,
+                Team = Team,
+                Mouse = !string.IsNullOrWhiteSpace(Mouse)
+                        ? (MouseEnum)Enum.Parse(typeof(MouseEnum), Mouse, true)
+                        : (MouseEnum?)null,
+                Mousepad = Mousepad,
+                CountryID = CountryID,
+                DateOfBirth = DateOfBirth
+            };
         }
     }
     public static class PlayerExtensions
