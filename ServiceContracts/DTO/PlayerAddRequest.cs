@@ -13,7 +13,7 @@ namespace ServiceContracts.DTO
         public string? Team { get; set; }
         public MouseEnum? Mouse { get; set; }
         public string? Mousepad { get; set; }
-        [Required(ErrorMessage ="Player country id is required")]
+        [Required(ErrorMessage ="Country is required")]
         public Guid? CountryID { get; set; }
         public DateTime? DateOfBirth { get; set; }
 

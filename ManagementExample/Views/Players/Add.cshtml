@@ -1,0 +1,114 @@
+﻿@model PlayerAddRequest;
+
+@{
+	ViewBag.Title = "Add Player";
+}
+
+
+<h2>Add Player</h2>
+
+<div class="w-50">
+	<form asp-controller="Players" asp-action="Add" method="post">
+
+		@* Nickname *@
+		<div class="form-field flex">
+			<div class="w-25">
+				<label asp-for="Nickname" class="form-label pt">Nickname</label>
+			</div>
+			<div class="flex-1">
+				<input asp-for="Nickname" class="form-input" />
+			</div>
+		</div>
+
+		@* Team *@
+		<div class="form-field flex">
+			<div class="w-25">
+				<label asp-for="Team" class="form-label pt">Team</label>
+			</div>
+			<div class="flex-1">
+				<input asp-for="Team" class="form-input" />
+			</div>
+		</div>
+
+		@* Mouse *@
+		<div class="form-field flex">
+			<div class="w-25">
+				<label asp-for="Mouse" class="form-label pt">Mouse</label>
+			</div>
+			<div class="flex-1">
+				@{
+					string[] mice = (string[])Enum.GetNames(typeof(MouseEnum));
+				}
+				<select asp-for="Mouse" class="form-input">
+					@foreach (var mouse in mice)
+					{
+						<option value="@mouse">@mouse</option>
+					}
+				</select>
+			</div>
+		</div>
+
+		@* Mousepad *@
+		<div class="form-field flex">
+			<div class="w-25">
+				<label asp-for="Mousepad" class="form-label pt">Mousepad</label>
+			</div>
+			<div class="flex-1">
+				<input asp-for="Mousepad" class="form-input" />
+			</div>
+		</div>
+
+		@* Country *@
+		<div class="form-field flex">
+			<div class="w-25">
+				<label asp-for="CountryID" class="form-label pt">Country</label>
+			</div>
+			<div class="flex-1">
+				<select asp-for="CountryID" class="form-input" asp-items="@ViewBag.Countries">
+					<option value="">Select country:</option>
+				</select>
+			</div>
+		</div>
+
+		@* Date of Birth *@
+		<div class="form-field flex">
+			<div class="w-25">
+				<label asp-for="DateOfBirth" class="form-label pt">Date of Birth</label>
+			</div>
+			<div class="flex-1">
+				<input type="date" asp-for="DateOfBirth" class="form-input" />
+			</div>
+		</div>
+
+		@* Submit *@
+		<div class="form-field flex">
+			<div class="w-25">
+			</div>
+			<div class="flex-1">
+				<button class="button button-green-back">Add Player</button>
+				<div asp-validation-summary="All" class="text-red"></div>
+
+				@if (ViewBag.Errors != null)
+				{
+					<div class="text-red ml">
+						<ul>
+							@foreach (string error in ViewBag.Errors)
+							{
+								<li class="ml">@error</li>
+							}
+						</ul>
+					</div>
+				}
+			</div>
+		</div>
+
+	</form>
+</div>
+
+@* CLIENT SIDE VALIDATION *@
+@section scripts
+{
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.4/jquery.validate.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+}

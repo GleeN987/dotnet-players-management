@@ -1,0 +1,49 @@
+﻿@model PlayerResponse
+
+@{
+	ViewBag.Title = "Delete Player";
+}
+
+
+<h2>Delete Player</h2>
+
+<div class="w-50">
+	<form asp-controller="Players" asp-action="Delete" method="post">
+
+		<input type="hidden" asp-for="PlayerID"/>
+
+		@* Nickname *@
+		<div class="form-field flex">
+			<div class="w-25">
+				<label asp-for="Nickname" class="form-label pt">Nickname</label>
+			</div>
+			<div class="flex-1">
+				<input asp-for="Nickname" class="form-input" disabled/>
+			</div>
+		</div>
+
+		@* Submit *@
+		<div class="form-field flex">
+			<div class="w-25">
+			</div>
+			<div class="flex-2">
+				<button class="button button-red-back">Delete Player</button>
+				<div asp-validation-summary="All" class="text-red"></div>
+
+				@if (ViewBag.Errors != null)
+				{
+					<div class="text-red ml">
+						<ul>
+							@foreach (string error in ViewBag.Errors)
+							{
+								<li class="ml">@error</li>
+							}
+						</ul>
+					</div>
+				}
+			</div>
+		</div>
+
+	</form>
+</div>
+
