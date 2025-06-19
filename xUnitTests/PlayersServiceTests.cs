@@ -7,6 +7,7 @@ using Services;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Xunit.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
 namespace xUnitTests
 {
@@ -17,8 +18,9 @@ namespace xUnitTests
         private readonly ITestOutputHelper _outputHelper;
         public PlayerServiceTests(ITestOutputHelper outputHelper)
         {
-            _playersService = new PlayersService(false);
-            _countriesService = new CountriesService(false);
+            PlayersDbContext dbContext = new PlayersDbContext(new DbContextOptionsBuilder<PlayersDbContext>().Options);
+            _countriesService = new CountriesService(dbContext);
+            _playersService = new PlayersService(dbContext, _countriesService);
             _outputHelper = outputHelper;
         }
 

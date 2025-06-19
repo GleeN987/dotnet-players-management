@@ -6,21 +6,11 @@ namespace Services
 {
     public class CountriesService : ICountriesService
     {
-        private readonly List<Country> _countries;
+        private readonly PlayersDbContext _db;
 
-        public CountriesService(bool initialize = true)
+        public CountriesService(PlayersDbContext dbContext)
         {
-            _countries = new List<Country>();
-            if (initialize)
-            {
-                _countries.AddRange(new List<Country>() 
-                {
-                    new Country() { CountryID = Guid.Parse("A52C23B2-777A-4D43-9E5A-2E1C6D730EBB"), CountryName = "Poland" },
-                    new Country() { CountryID = Guid.Parse("E4AA3C20-D609-4179-A744-81572EFEA56E"), CountryName = "China" },
-                    new Country() { CountryID = Guid.Parse("E517F036-6F16-4A79-89C7-D2FA5D40D289"), CountryName = "Brazil" },
-                    new Country() { CountryID = Guid.Parse("FA7648A4-6A0B-4B96-BCC7-D7AA1D0D3B9E"), CountryName = "France" },
-                });
-            }
+            _db = dbContext;
         }
 
         public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
@@ -33,21 +23,22 @@ namespace Services
             { 
                 throw new ArgumentException(nameof(CountryAddRequest.CountryName)); 
             }
-            if (_countries.Exists(c => c.CountryName == countryAddRequest.CountryName))
+            if (_db.Countries.Count(c => c.CountryName == countryAddRequest.CountryName) > 0)
             {
                 throw new ArgumentException("Country with this name already exists."); 
             }
           
             Country country = countryAddRequest.ToCountry();
             country.CountryID = Guid.NewGuid();
-            _countries.Add(country);
+            _db.Countries.Add(country);
+            _db.SaveChanges();
 
             return country.ToCountryResponse();
         }
 
         public List<CountryResponse> GetAllCountries()
         {
-            return _countries.Select(c => c.ToCountryResponse()).ToList();
+            return _db.Countries.Select(c => c.ToCountryResponse()).ToList();
         }
 
         public CountryResponse? GetCountryByID(Guid? countryID)
@@ -56,7 +47,7 @@ namespace Services
             {
                 return null;
             }
-            Country? country = _countries.FirstOrDefault(c => c.CountryID == countryID);
+            Country? country = _db.Countries.FirstOrDefault(c => c.CountryID == countryID);
             if (country == null) 
             {
                 return null;

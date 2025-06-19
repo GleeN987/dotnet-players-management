@@ -11,27 +11,13 @@ namespace Services
 {
     public class PlayersService : IPlayersService
     {
-        private readonly List<Player> _players;
+        private readonly PlayersDbContext _db;
         private readonly ICountriesService _countriesService;
 
-        public PlayersService(bool initialize = true)
+        public PlayersService(PlayersDbContext dbContext, ICountriesService countriesService)
         {
-            _players = new List<Player>();
-            _countriesService = new CountriesService();
-            if (initialize)
-            {
-                _players.AddRange(new List<Player>() 
-                {
-                    new Player() { PlayerID=Guid.Parse("01A4C2DD-2E65-4A19-9973-A8F513ED9D4D"), Nickname="Snax", Team="G2", Mouse="Zowie", Mousepad="Logitech G640", DateOfBirth=DateTime.Parse("1995-01-04"), CountryID=Guid.Parse("FA7648A4-6A0B-4B96-BCC7-D7AA1D0D3B9E") },
-                    new Player() { PlayerID=Guid.Parse("E4AA3C20-D609-4179-A744-81572EFEA56E"), Nickname="EmiliaQAQ", Team="Lynn Vision", Mouse="Logitech", Mousepad="Qck Heavy", DateOfBirth=DateTime.Parse("2002-03-07"), CountryID=Guid.Parse("A52C23B2-777A-4D43-9E5A-2E1C6D730EBB") },
-                    new Player() { PlayerID=Guid.Parse("24C003C1-84A3-4907-BBF7-039508CA689F"), Nickname="dumau", Team="Legacy", Mouse="Zowie", Mousepad="Artisan Zero", DateOfBirth=DateTime.Parse("2004-12-05"), CountryID=Guid.Parse("E517F036-6F16-4A79-89C7-D2FA5D40D289") },
-                    new Player() { PlayerID=Guid.Parse("E7EBD193-8574-4A2C-8D2B-C3AE5F41AA02"), Nickname="Zywoo", Team="Vitality", Mouse="Pulsar", Mousepad="The Chosen One", DateOfBirth=DateTime.Parse("2000-11-11"), CountryID=Guid.Parse("A52C23B2-777A-4D43-9E5A-2E1C6D730EBB") },
-
-                 });
-
-          
-            }
-           
+            _db = dbContext;
+            _countriesService = countriesService;
         }
 
         private PlayerResponse PlayerToPlayerResponse(Player player)
@@ -47,21 +33,20 @@ namespace Services
             ValidationHelper.ModelValidation(playerRequest);
             Player playerToAdd = playerRequest.ToPlayer();
             playerToAdd.PlayerID = Guid.NewGuid();
-            _players.Add(playerToAdd);
+            _db.sp_AddPlayer(playerToAdd);
             return PlayerToPlayerResponse(playerToAdd);
         }
 
         public List<PlayerResponse> GetAllPlayers()
         {
-            List<PlayerResponse> players = _players.Select(p => PlayerToPlayerResponse(p)).ToList();
-            return players;
+            return _db.sp_GetAllPlayers().Select(p => PlayerToPlayerResponse(p)).ToList();
         }
 
         public PlayerResponse? GetPlayerByID(Guid? playerID)
         {
             if (playerID == null) return null;
 
-            Player? player = _players.FirstOrDefault(p => p.PlayerID == playerID);
+            Player? player = _db.Players.FirstOrDefault(p => p.PlayerID == playerID);
             if (player == null) return null;
 
             return PlayerToPlayerResponse(player);
@@ -157,7 +142,7 @@ namespace Services
             if (request == null) throw new ArgumentNullException(nameof(Player));
             ValidationHelper.ModelValidation(request);
 
-            Player? playerToUpdate = _players.FirstOrDefault(p => p.PlayerID == request.PlayerID);
+            Player? playerToUpdate = _db.Players.FirstOrDefault(p => p.PlayerID == request.PlayerID);
             if (playerToUpdate == null) throw new ArgumentException("Player with this ID doesn't exist");
             playerToUpdate.Nickname = request.Nickname;
             playerToUpdate.Team = request.Team;
@@ -165,6 +150,7 @@ namespace Services
             playerToUpdate.Mousepad = request.Mousepad;
             playerToUpdate.CountryID = request.CountryID;
             playerToUpdate.DateOfBirth = request.DateOfBirth;
+            _db.SaveChanges();
 
             return PlayerToPlayerResponse(playerToUpdate);
         }
@@ -172,9 +158,11 @@ namespace Services
         public bool DeletePlayer(Guid? playerID)
         {
             if (playerID == null) throw new ArgumentNullException(nameof(playerID));
-            Player? playerToDelete = _players.FirstOrDefault(p => p.PlayerID ==  playerID);
+            Player? playerToDelete = _db.Players.FirstOrDefault(p => p.PlayerID ==  playerID);
             if (playerToDelete == null) return false;
-            _players.Remove(playerToDelete);
+            _db.Players.Remove(playerToDelete);
+            _db.SaveChanges();
+
             return true;
         }
     }

@@ -3,6 +3,7 @@ using Entities;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace xUnitTests
 {
@@ -12,7 +13,7 @@ namespace xUnitTests
 
         public CountriesServiceTests()
         {
-            _countriesService = new CountriesService(false);
+            _countriesService = new CountriesService(new PlayersDbContext(new DbContextOptionsBuilder<PlayersDbContext>().Options));
         }
         #region AddCountry
         //country request is null -> null exception
